@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="YouTubeSubscriber.Views.AccountsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:YouTubeSubscriber.Views"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:Syncfusion="http://schemas.syncfusion.com/wpf" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" 
+             d:DesignWidth="480"
+             x:Name="control">
+    <Grid>
+        <Syncfusion:SfDataGrid ItemsSource="{Binding Accounts}" ColumnSizer="Star" AutoGenerateColumns="False" AllowEditing="True" AllowDeleting="True" HorizontalAlignment="Left" Margin="0,50,0,0">
+            <Syncfusion:SfDataGrid.Columns>
+                <Syncfusion:GridTextColumn HeaderText="Email" MappingName="Email" />
+                <Syncfusion:GridTextColumn HeaderText="Password" MappingName="Password" />
+                <Syncfusion:GridCheckBoxColumn HeaderText="IsVerified" MappingName="IsVerified" AllowEditing="False" />
+            </Syncfusion:SfDataGrid.Columns>
+        </Syncfusion:SfDataGrid>
+        <Syncfusion:ButtonAdv Content="Add" Command="{Binding AddAccountCommand}" HorizontalAlignment="Left" Height="29" Label="Add" Margin="10,10,0,0" VerticalAlignment="Top" Width="97" SmallIcon="/YouTubeSubscriber;component/Icons/add.png"/>
+        <Syncfusion:ButtonAdv Content="Edit" HorizontalAlignment="Left" Height="29" Label="Edit" Margin="112,10,0,0" VerticalAlignment="Top" Width="102" SmallIcon="/YouTubeSubscriber;component/Icons/edit.png"/>
+        <Syncfusion:ButtonAdv Content="Delete" HorizontalAlignment="Left" Height="29" Label="Delete" Margin="219,10,0,0" VerticalAlignment="Top" Width="102" SmallIcon="/YouTubeSubscriber;component/Icons/rubbish-bin.png"/>
+        <Syncfusion:ButtonAdv Content="Import from excel" Command="{Binding ImportFromExcelCommand}" HorizontalAlignment="Left" Height="29" Label="Import from excel" Margin="326,10,-3.6,0" VerticalAlignment="Top" Width="148" SmallIcon="/YouTubeSubscriber;component/Icons/excel.png"/>
+    </Grid>
+</UserControl>
