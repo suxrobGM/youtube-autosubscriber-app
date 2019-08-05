@@ -1,11 +1,8 @@
-﻿using Prism.Mvvm;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using Prism.Commands;
+using Prism.Mvvm;
 using YouTubeSubscriber.Models;
+using YouTubeSubscriber.Views;
 
 namespace YouTubeSubscriber.ViewModels
 {
@@ -15,11 +12,18 @@ namespace YouTubeSubscriber.ViewModels
 
         public ObservableCollection<Channel> Channels { get; }
         public Channel SelectedChannel { get => _selectedChannel; set { SetProperty(ref _selectedChannel, value); } }
+        public DelegateCommand AddChannelCommand { get; }
 
         public ChannelsViewModel()
         {
             Channels = new ObservableCollection<Channel>();
             GenerateChannels();
+
+            AddChannelCommand = new DelegateCommand(() =>
+            {
+                var addChannelView = new AddChannelView();
+                addChannelView.ShowDialog();
+            });
         }
 
         private void GenerateChannels()
@@ -28,27 +32,27 @@ namespace YouTubeSubscriber.ViewModels
             {
                 new Channel()
                 {
-                    Name = "UzbekFilmsHD",
+                    Title = "UzbekFilmsHD",
                     Url = "https://www.youtube.com/user/UzbekFilmsHD",
                 },
                 new Channel()
                 {
-                    Name = "Dumbazz",
+                    Title = "Dumbazz",
                     Url = "https://www.youtube.com/channel/UC64Dw03B-EgwrNERMOy1u5w",
                 },
                 new Channel()
                 {
-                    Name = "NevoFilms",
+                    Title = "NevoFilms",
                     Url = "https://www.youtube.com/channel/UC8O6rvkAJqGVWMlT9zgdH9Q",
                 },
                 new Channel()
                 {
-                    Name = "KinoCheck International",
+                    Title = "KinoCheck International",
                     Url = "https://www.youtube.com/user/Filme",
                 },
                 new Channel()
                 {
-                    Name = "Fast & Furious",
+                    Title = "Fast & Furious",
                     Url = "https://www.youtube.com/user/fastandfuriousmovie",
                 },
             };

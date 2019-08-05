@@ -8,7 +8,7 @@
         xmlns:Syncfusion="http://schemas.syncfusion.com/wpf"
         Syncfusion:SkinStorage.VisualStyle="Office2010Blue"
         mc:Ignorable="d"
-        Title="Add Google Account" 
+        Title="Add Channel" 
         Height="400" 
         Width="350" 
         WindowStartupLocation="CenterScreen" 
@@ -16,14 +16,15 @@
         prism:ViewModelLocator.AutoWireViewModel="True" 
         Icon="/YouTubeSubscriber;component/youtube.ico">
     <Grid>
-        <TextBlock TextWrapping="Wrap" Text="Google Account" Height="30" FontWeight="Bold" Padding="0,3,0,0" FontSize="14" Margin="105,14,124,326.4"/>
-        <WrapPanel Margin="10,45,10,262.4">
-            <TextBlock TextWrapping="Wrap" Text="Email:" Height="30" Width="76" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
-            <TextBox Height="24" TextWrapping="Wrap" Text="{Binding EmailField}" Width="245" Padding="0,2,0,0"/>
-            <TextBlock TextWrapping="Wrap" Text="Password:" Height="30" Width="76" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
-            <TextBox Height="24" TextWrapping="Wrap" Text="{Binding PasswordField}" Width="245" Padding="0,2,0,0"/>
+        <TextBlock TextWrapping="Wrap" Text="YouTube Channel" Height="30" FontWeight="Bold" Padding="0,3,0,0" FontSize="14" Margin="105,14,124,326.4"/>
+        <WrapPanel Margin="10,45,10,291.4">
+            <TextBlock TextWrapping="Wrap" Text="URL:" Height="30" Width="39" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
+            <TextBox Height="24" Text="{Binding UrlField, UpdateSourceTrigger=PropertyChanged}" Width="284" Padding="0,2,0,0" FontSize="10"/>
         </WrapPanel>
-        <Button Content="Add" HorizontalAlignment="Left" Margin="259,113,0,0" VerticalAlignment="Top" Width="75"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,130,0,0" TextWrapping="Wrap" Text="Status:" VerticalAlignment="Top" FontSize="14"/>
+        <Button Content="Verify channel" Command="{Binding VerifyChannelCommand}" HorizontalAlignment="Left" Margin="50,79,0,0" VerticalAlignment="Top" Width="90" Height="25"/>
+        <Button Content="Add" Command="{Binding AddChannelCommand}" HorizontalAlignment="Left" Margin="145,79,0,0" VerticalAlignment="Top" Width="75" Height="25"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,120,0,0" TextWrapping="Wrap" Text="Status:" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+        <TextBox IsReadOnly="True" HorizontalAlignment="Left" Height="216" Margin="10,144,0,0" TextWrapping="Wrap" Text="{Binding StatusText}" VerticalAlignment="Top" Width="324"/>
+        <Syncfusion:SfBusyIndicator ViewboxHeight="20" ViewboxWidth="40" Margin="60,118,0,0" Content="" IsBusy="{Binding IsBusy}"  Foreground="#FF17B01E"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="28" Height="26" AnimationType="SingleCircle"/>
     </Grid>
 </Syncfusion:ChromelessWindow>

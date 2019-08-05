@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Windows;
 using System.Windows.Forms;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -55,27 +54,27 @@ namespace YouTubeSubscriber.ViewModels
             {
                 new Channel()
                 {
-                    Name = "UzbekFilmsHD",
+                    Title = "UzbekFilmsHD",
                     Url = "https://www.youtube.com/user/UzbekFilmsHD",
                 },
                 new Channel()
                 {
-                    Name = "Dumbazz",
+                    Title = "Dumbazz",
                     Url = "https://www.youtube.com/channel/UC64Dw03B-EgwrNERMOy1u5w",
                 },
                 new Channel()
                 {
-                    Name = "NevoFilms",
+                    Title = "NevoFilms",
                     Url = "https://www.youtube.com/channel/UC8O6rvkAJqGVWMlT9zgdH9Q",
                 },
                 new Channel()
                 {
-                    Name = "KinoCheck International",
+                    Title = "KinoCheck International",
                     Url = "https://www.youtube.com/user/Filme",
                 },
                 new Channel()
                 {
-                    Name = "Fast & Furious",
+                    Title = "Fast & Furious",
                     Url = "https://www.youtube.com/user/fastandfuriousmovie",
                 },
             };            

@@ -13,11 +13,12 @@
     <Grid>
         <Syncfusion:SfDataGrid ItemsSource="{Binding Channels}" SelectedItem="{Binding SelectedChannel}" AutoGenerateColumns="False" AllowEditing="False" AllowDeleting="True" HorizontalAlignment="Left" Margin="0,50,0,0">
             <Syncfusion:SfDataGrid.Columns>
-                <Syncfusion:GridTextColumn HeaderText="Name" MappingName="Name" />
+                <Syncfusion:GridTextColumn HeaderText="Title" MappingName="Title" />
+                <Syncfusion:GridTextColumn HeaderText="Subscriber Count" MappingName="SubscriberCount" />
                 <Syncfusion:GridHyperlinkColumn ColumnSizer="AutoLastColumnFill" HeaderText="Url" MappingName="Url" />
             </Syncfusion:SfDataGrid.Columns>
         </Syncfusion:SfDataGrid>
-        <Syncfusion:ButtonAdv Content="ButtonAdv" HorizontalAlignment="Left" Height="29" Label="Add" Margin="10,10,0,0" VerticalAlignment="Top" Width="97" SmallIcon="/YouTubeSubscriber;component/Icons/add.png"/>
+        <Syncfusion:ButtonAdv Content="ButtonAdv" Command="{Binding AddChannelCommand}" HorizontalAlignment="Left" Height="29" Label="Add" Margin="10,10,0,0" VerticalAlignment="Top" Width="97" SmallIcon="/YouTubeSubscriber;component/Icons/add.png"/>
         <Syncfusion:ButtonAdv Content="ButtonAdv" HorizontalAlignment="Left" Height="29" Label="Edit" Margin="112,10,0,0" VerticalAlignment="Top" Width="97" SmallIcon="/YouTubeSubscriber;component/Icons/edit.png"/>
         <Syncfusion:ButtonAdv Content="ButtonAdv" HorizontalAlignment="Left" Height="29" Label="Delete" Margin="214,10,0,0" VerticalAlignment="Top" Width="97" SmallIcon="/YouTubeSubscriber;component/Icons/rubbish-bin.png"/>
     </Grid>
