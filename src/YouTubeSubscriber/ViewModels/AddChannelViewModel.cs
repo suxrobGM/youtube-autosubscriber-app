@@ -12,9 +12,9 @@ namespace YouTubeSubscriber.ViewModels
         private string _statusText;
         private bool _isBusy;
         private bool _channelVerified;
-        private readonly Automatization _automatization;
 
         public bool IsBusy { get => _isBusy; set { SetProperty(ref _isBusy, value); } }
+        public string StatusText { get => _statusText; set { SetProperty(ref _statusText, value); } }
         public string UrlField
         {
             get => _urlField;
@@ -23,23 +23,14 @@ namespace YouTubeSubscriber.ViewModels
                 SetProperty(ref _urlField, value);
                 VerifyChannelCommand.RaiseCanExecuteChanged();
             }
-        }
-        public string StatusText
-        {
-            get => _statusText;
-            set
-            {
-                SetProperty(ref _statusText, value);
-            }
-        }
+        }        
         
 
         public DelegateCommand VerifyChannelCommand { get; }
-        public DelegateCommand AddChannelCommand { get; }
+        public DelegateCommand AddChannelCommand { get; }      
 
         public AddChannelViewModel()
         {
-            _automatization = new Automatization();
             StatusText = "";
 
             VerifyChannelCommand = new DelegateCommand(() =>
@@ -48,20 +39,23 @@ namespace YouTubeSubscriber.ViewModels
                 {
                     IsBusy = true;
                     StatusText += "Verifying channel...\n";
-                    _automatization.HeadlessChrome();
-                    var channel = new Channel()
-                    {
-                        Url = UrlField,
-                    };
 
-                    if (_automatization.VerifyChannel(ref channel))
+                    using (var automatization = new Automatization(true))
                     {
-                        StatusText += "Channel verified now you can add to list\n";
-                        StatusText += channel.ToString() + "\n";
-                        _channelVerified = true;
-                        IsBusy = false;
-                        AddChannelCommand.RaiseCanExecuteChanged();
-                    }
+                        var channel = new Channel()
+                        {
+                            Url = UrlField,
+                        };
+
+                        if (automatization.VerifyChannel(ref channel))
+                        {
+                            StatusText += "Channel verified now you can add to list\n";
+                            StatusText += channel.ToString() + "\n";
+                            _channelVerified = true;
+                            IsBusy = false;
+                            AddChannelCommand.RaiseCanExecuteChanged();
+                        }
+                    }                    
                 });
                 
             }, CanExecuteVerifyCommand);

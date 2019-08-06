@@ -9,10 +9,19 @@ namespace YouTubeSubscriber.ViewModels
     public class ChannelsViewModel : BindableBase
     {
         private Channel _selectedChannel;
-
+            
         public ObservableCollection<Channel> Channels { get; }
-        public Channel SelectedChannel { get => _selectedChannel; set { SetProperty(ref _selectedChannel, value); } }
         public DelegateCommand AddChannelCommand { get; }
+        public DelegateCommand EditSubscribersCommand { get; }
+        public Channel SelectedChannel
+        {
+            get => _selectedChannel;
+            set
+            {
+                SetProperty(ref _selectedChannel, value);
+                EditSubscribersCommand.RaiseCanExecuteChanged();
+            }
+        }
 
         public ChannelsViewModel()
         {
@@ -24,8 +33,17 @@ namespace YouTubeSubscriber.ViewModels
                 var addChannelView = new AddChannelView();
                 addChannelView.ShowDialog();
             });
+
+            EditSubscribersCommand = new DelegateCommand(() =>
+            {
+                var editSubscribersView = new EditChannelSubscribersView();
+                (editSubscribersView.DataContext as EditChannelSubscribersViewModel).Channel = SelectedChannel;
+                editSubscribersView.ShowDialog();
+
+            }, CanExecuteEditSubscribers);
         }
 
+        private bool CanExecuteEditSubscribers() => SelectedChannel != null;
         private void GenerateChannels()
         {
             var channels = new Channel[]

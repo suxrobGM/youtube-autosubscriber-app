@@ -9,6 +9,9 @@ namespace YouTubeSubscriber.Data
         {
         }
 
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Channel> Channels { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
