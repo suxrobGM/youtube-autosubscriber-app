@@ -4,27 +4,59 @@ using System.IO;
 using System.Windows.Forms;
 using Prism.Commands;
 using Prism.Mvvm;
+using YouTubeSubscriber.Data;
+using YouTubeSubscriber.Helpers;
 using YouTubeSubscriber.Models;
 using YouTubeSubscriber.Views;
 
 namespace YouTubeSubscriber.ViewModels
 {
     public class AccountsViewModel : BindableBase
-    {       
+    {
+        private readonly ApplicationDbContext _context;
+        private Account _selectedAccount;
+       
         public ObservableCollection<Account> Accounts { get; }      
         public DelegateCommand ImportFromExcelCommand { get; }
         public DelegateCommand AddAccountCommand { get; }
+        public DelegateCommand RemoveCommand { get; }
 
-        public AccountsViewModel()
+        public Account SelectedAccount
         {
-            Accounts = new ObservableCollection<Account>();
-            GenerateAccounts();
+            get => _selectedAccount;
+            set
+            {
+                SetProperty(ref _selectedAccount, value);
+                RemoveCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public AccountsViewModel(ApplicationDbContext context)
+        {
+            _context = context;
+            _context.Database.EnsureCreated();
+            Accounts = new ObservableCollection<Account>(_context.Accounts);
+            //GenerateAccounts();
 
             AddAccountCommand = new DelegateCommand(() =>
             {
                 var addAccountView = new AddAccountView();
+                (addAccountView.DataContext as AddAccountViewModel).Accounts = Accounts;
                 addAccountView.ShowDialog();
             });
+
+            RemoveCommand = new DelegateCommand(() =>
+            {
+                var msgResult = MessageBox.Show($"Do you want to remove account from database?\n{SelectedAccount}", "Remove account", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (msgResult == DialogResult.Yes)
+                {                  
+                    _context.Accounts.Remove(SelectedAccount);
+                    _context.SaveChanges();
+                    Accounts.Remove(SelectedAccount);
+                }
+
+            }, CanExecuteRemoveCommand);
 
             ImportFromExcelCommand = new DelegateCommand(() =>
             {
@@ -36,13 +68,15 @@ namespace YouTubeSubscriber.ViewModels
 
                     if (!string.IsNullOrWhiteSpace(dialog.FileName))
                     {
-                        var msgResult = System.Windows.Forms.MessageBox.Show($"Do you want to import {{}} accounts from {Path.GetFileName(dialog.FileName)} ?", "Excel Import", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        var accounts = ExcelParser.ParseAccounts(dialog.FileName);
+                        var msgResult = MessageBox.Show($"Do you want to import {accounts.Count} accounts from {Path.GetFileName(dialog.FileName)} ?", "Excel Import", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                         if (msgResult == DialogResult.Yes)
-                        {
-
+                        {                          
+                            _context.Accounts.AddRange(accounts);
+                            _context.SaveChanges();
+                            Accounts.AddRange(accounts);
                         }
                     }                                      
-                    //UsernamesFilePath = dialog.FileName;
                 }
             });
         }
@@ -97,5 +131,6 @@ namespace YouTubeSubscriber.ViewModels
                 Accounts.Add(account);
             }
         }
+        private bool CanExecuteRemoveCommand() => SelectedAccount != null;
     }
 }

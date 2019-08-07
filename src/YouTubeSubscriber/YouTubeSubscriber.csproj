@@ -270,6 +270,15 @@
     </Compile>
     <Compile Include="Data\ApplicationDbContext.cs" />
     <Compile Include="Helpers\ExcelParser.cs" />
+    <Compile Include="Migrations\20190807080410_created_database.cs" />
+    <Compile Include="Migrations\20190807080410_created_database.designer.cs">
+      <DependentUpon>20190807080410_created_database.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20190807084516_added_unique_indexes.cs" />
+    <Compile Include="Migrations\20190807084516_added_unique_indexes.designer.cs">
+      <DependentUpon>20190807084516_added_unique_indexes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\ApplicationDbContextModelSnapshot.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Models\ChannelAccount.cs" />

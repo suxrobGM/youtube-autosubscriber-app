@@ -22,6 +22,18 @@ namespace YouTubeSubscriber.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Account>(entity =>
+            {
+                entity.HasIndex(m => m.Email)
+                    .IsUnique();
+            });
+
+            modelBuilder.Entity<Channel>(entity =>
+            {
+                entity.HasIndex(m => m.Url)
+                    .IsUnique();
+            });
+
             modelBuilder.Entity<ChannelAccount>(entity =>
             {
                 entity.HasKey(k => new { k.AccountId, k.ChannelId });

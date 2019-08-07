@@ -19,5 +19,16 @@ namespace YouTubeSubscriber.Models
         public string Password { get; set; }
         public bool IsVerified { get; set; }
         public virtual List<ChannelAccount> SubscribedChannels { get; set; }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("Account detail:");
+            builder.AppendLine($" Email: {Email}");
+            builder.AppendLine($" Password: {Password}");
+            builder.AppendLine($" IsVerified: {IsVerified}");
+
+            return builder.ToString();
+        }
     }
 }

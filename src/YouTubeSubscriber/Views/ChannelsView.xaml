@@ -20,6 +20,6 @@
         </Syncfusion:SfDataGrid>
         <Syncfusion:ButtonAdv Content="ButtonAdv" Command="{Binding AddChannelCommand}" HorizontalAlignment="Left" Height="29" Label="Add" Margin="10,10,0,0" VerticalAlignment="Top" Width="97" SmallIcon="/YouTubeSubscriber;component/Icons/add.png"/>
         <Syncfusion:ButtonAdv Content="ButtonAdv" Command="{Binding EditSubscribersCommand}" HorizontalAlignment="Left" Height="29" Label="Edit Subscribers" Margin="112,10,0,0" VerticalAlignment="Top" Width="123" SmallIcon="/YouTubeSubscriber;component/Icons/subscribe.png"/>
-        <Syncfusion:ButtonAdv Content="ButtonAdv" HorizontalAlignment="Left" Height="29" Label="Delete" Margin="240,10,0,0" VerticalAlignment="Top" Width="97" SmallIcon="/YouTubeSubscriber;component/Icons/rubbish-bin.png"/>
+        <Syncfusion:ButtonAdv Content="ButtonAdv" Command="{Binding RemoveChannel}" HorizontalAlignment="Left" Height="29" Label="Remove" Margin="240,10,0,0" VerticalAlignment="Top" Width="97" SmallIcon="/YouTubeSubscriber;component/Icons/rubbish-bin.png"/>
     </Grid>
 </UserControl>

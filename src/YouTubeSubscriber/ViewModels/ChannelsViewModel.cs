@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Forms;
 using Prism.Commands;
 using Prism.Mvvm;
+using YouTubeSubscriber.Data;
 using YouTubeSubscriber.Models;
 using YouTubeSubscriber.Views;
 
@@ -8,11 +10,13 @@ namespace YouTubeSubscriber.ViewModels
 {
     public class ChannelsViewModel : BindableBase
     {
+        private readonly ApplicationDbContext _context;
         private Channel _selectedChannel;
             
         public ObservableCollection<Channel> Channels { get; }
         public DelegateCommand AddChannelCommand { get; }
         public DelegateCommand EditSubscribersCommand { get; }
+        public DelegateCommand RemoveChannel { get; }
         public Channel SelectedChannel
         {
             get => _selectedChannel;
@@ -20,13 +24,15 @@ namespace YouTubeSubscriber.ViewModels
             {
                 SetProperty(ref _selectedChannel, value);
                 EditSubscribersCommand.RaiseCanExecuteChanged();
+                RemoveChannel.RaiseCanExecuteChanged();
             }
         }
 
-        public ChannelsViewModel()
+        public ChannelsViewModel(ApplicationDbContext context)
         {
-            Channels = new ObservableCollection<Channel>();
-            GenerateChannels();
+            _context = context;
+            Channels = _context.Channels.Local.ToObservableCollection();
+            //GenerateChannels();
 
             AddChannelCommand = new DelegateCommand(() =>
             {
@@ -39,6 +45,19 @@ namespace YouTubeSubscriber.ViewModels
                 var editSubscribersView = new EditChannelSubscribersView();
                 (editSubscribersView.DataContext as EditChannelSubscribersViewModel).Channel = SelectedChannel;
                 editSubscribersView.ShowDialog();
+
+            }, CanExecuteEditSubscribers);
+
+            RemoveChannel = new DelegateCommand(() =>
+            {
+                var msgResult = MessageBox.Show($"Do you want to remove channel from database?\n{SelectedChannel}", "Remove channel", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (msgResult == DialogResult.Yes)
+                {
+                    _context.Channels.Remove(SelectedChannel);
+                    _context.SaveChanges();
+                    Channels.Remove(SelectedChannel);
+                }
 
             }, CanExecuteEditSubscribers);
         }

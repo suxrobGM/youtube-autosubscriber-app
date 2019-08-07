@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using Prism.Ioc;
 using Prism.Unity;
+using YouTubeSubscriber.Data;
 using YouTubeSubscriber.Views;
 
 namespace YouTubeSubscriber
@@ -17,7 +18,7 @@ namespace YouTubeSubscriber
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            
+            containerRegistry.Register<ApplicationDbContext>();
         }
     }
 }

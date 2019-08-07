@@ -12,16 +12,16 @@
              d:DesignWidth="480"
              x:Name="control">
     <Grid>
-        <Syncfusion:SfDataGrid ItemsSource="{Binding Accounts}" ColumnSizer="Star" AutoGenerateColumns="False" AllowEditing="True" AllowDeleting="True" HorizontalAlignment="Left" Margin="0,50,0,0">
+        <Syncfusion:SfDataGrid ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}" ColumnSizer="Star" AutoGenerateColumns="False" AllowEditing="True" AllowDeleting="True" HorizontalAlignment="Left" Margin="0,50,0,0" AddNewRowPosition="Top">
             <Syncfusion:SfDataGrid.Columns>
                 <Syncfusion:GridTextColumn HeaderText="Email" MappingName="Email" />
                 <Syncfusion:GridTextColumn HeaderText="Password" MappingName="Password" />
                 <Syncfusion:GridCheckBoxColumn HeaderText="IsVerified" MappingName="IsVerified" AllowEditing="False" />
             </Syncfusion:SfDataGrid.Columns>
+            
         </Syncfusion:SfDataGrid>
         <Syncfusion:ButtonAdv Content="Add" Command="{Binding AddAccountCommand}" HorizontalAlignment="Left" Height="29" Label="Add" Margin="10,10,0,0" VerticalAlignment="Top" Width="97" SmallIcon="/YouTubeSubscriber;component/Icons/add.png"/>
-        <Syncfusion:ButtonAdv Content="Edit" HorizontalAlignment="Left" Height="29" Label="Edit" Margin="112,10,0,0" VerticalAlignment="Top" Width="102" SmallIcon="/YouTubeSubscriber;component/Icons/edit.png"/>
-        <Syncfusion:ButtonAdv Content="Delete" HorizontalAlignment="Left" Height="29" Label="Delete" Margin="219,10,0,0" VerticalAlignment="Top" Width="102" SmallIcon="/YouTubeSubscriber;component/Icons/rubbish-bin.png"/>
-        <Syncfusion:ButtonAdv Content="Import from excel" Command="{Binding ImportFromExcelCommand}" HorizontalAlignment="Left" Height="29" Label="Import from excel" Margin="326,10,-3.6,0" VerticalAlignment="Top" Width="148" SmallIcon="/YouTubeSubscriber;component/Icons/excel.png"/>
+        <Syncfusion:ButtonAdv Content="Remove" Command="{Binding RemoveCommand}" HorizontalAlignment="Left" Height="29" Label="Remove" Margin="112,10,0,0" VerticalAlignment="Top" Width="102" SmallIcon="/YouTubeSubscriber;component/Icons/rubbish-bin.png"/>
+        <Syncfusion:ButtonAdv Content="Import from excel" Command="{Binding ImportFromExcelCommand}" HorizontalAlignment="Left" Height="29" Label="Import from excel" Margin="219,10,0,0" VerticalAlignment="Top" Width="148" SmallIcon="/YouTubeSubscriber;component/Icons/excel.png"/>
     </Grid>
 </UserControl>

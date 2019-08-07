@@ -1,6 +1,7 @@
-﻿using Prism.Commands;
+﻿using System.Threading.Tasks;
+using Prism.Commands;
 using Prism.Mvvm;
-using System.Threading.Tasks;
+using YouTubeSubscriber.Data;
 using YouTubeSubscriber.Models;
 using YouTubeSubscriber.Services;
 
@@ -12,6 +13,8 @@ namespace YouTubeSubscriber.ViewModels
         private string _statusText;
         private bool _isBusy;
         private bool _channelVerified;
+        private readonly ApplicationDbContext _context;
+        private Channel _channel;
 
         public bool IsBusy { get => _isBusy; set { SetProperty(ref _isBusy, value); } }
         public string StatusText { get => _statusText; set { SetProperty(ref _statusText, value); } }
@@ -29,8 +32,9 @@ namespace YouTubeSubscriber.ViewModels
         public DelegateCommand VerifyChannelCommand { get; }
         public DelegateCommand AddChannelCommand { get; }      
 
-        public AddChannelViewModel()
+        public AddChannelViewModel(ApplicationDbContext context)
         {
+            _context = context;
             StatusText = "";
 
             VerifyChannelCommand = new DelegateCommand(() =>
@@ -42,15 +46,15 @@ namespace YouTubeSubscriber.ViewModels
 
                     using (var automatization = new Automatization(true))
                     {
-                        var channel = new Channel()
+                        _channel = new Channel()
                         {
                             Url = UrlField,
                         };
 
-                        if (automatization.VerifyChannel(ref channel))
+                        if (automatization.VerifyChannel(ref _channel))
                         {
                             StatusText += "Channel verified now you can add to list\n";
-                            StatusText += channel.ToString() + "\n";
+                            StatusText += _channel.ToString() + "\n";
                             _channelVerified = true;
                             IsBusy = false;
                             AddChannelCommand.RaiseCanExecuteChanged();
@@ -64,6 +68,8 @@ namespace YouTubeSubscriber.ViewModels
             {
                 UrlField = "";
                 _channelVerified = false;
+                _context.Channels.Add(_channel);
+                _context.SaveChanges();
                 AddChannelCommand.RaiseCanExecuteChanged();
 
             }, CanExecuteAddCommand);

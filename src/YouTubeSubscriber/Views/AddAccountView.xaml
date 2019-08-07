@@ -19,11 +19,12 @@
         <TextBlock TextWrapping="Wrap" Text="Google Account" Height="30" FontWeight="Bold" Padding="0,3,0,0" FontSize="14" Margin="105,14,124,326.4"/>
         <WrapPanel Margin="10,45,10,262.4">
             <TextBlock TextWrapping="Wrap" Text="Email:" Height="30" Width="76" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
-            <TextBox Height="24" TextWrapping="Wrap" Text="{Binding EmailField}" Width="245" Padding="0,2,0,0"/>
+            <TextBox Height="24" TextWrapping="Wrap" Text="{Binding EmailField, UpdateSourceTrigger=PropertyChanged}" Width="245" Padding="0,2,0,0"/>
             <TextBlock TextWrapping="Wrap" Text="Password:" Height="30" Width="76" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
-            <TextBox Height="24" TextWrapping="Wrap" Text="{Binding PasswordField}" Width="245" Padding="0,2,0,0"/>
+            <TextBox Height="24" TextWrapping="Wrap" Text="{Binding PasswordField, UpdateSourceTrigger=PropertyChanged}" Width="245" Padding="0,2,0,0"/>
         </WrapPanel>
-        <Button Content="Add" HorizontalAlignment="Left" Margin="259,113,0,0" VerticalAlignment="Top" Width="75"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,130,0,0" TextWrapping="Wrap" Text="Status:" VerticalAlignment="Top" FontSize="14"/>
+        <Button Content="Add" Command="{Binding AddAccountCommand}" HorizontalAlignment="Left" Margin="259,108,0,0" VerticalAlignment="Top" Width="75"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,130,0,0" TextWrapping="Wrap" Text="Status:" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+        <TextBox IsReadOnly="True" HorizontalAlignment="Left" Height="206" Margin="10,154,0,0" TextWrapping="Wrap" Text="{Binding StatusText}" VerticalAlignment="Top" Width="324"/>
     </Grid>
 </Syncfusion:ChromelessWindow>
