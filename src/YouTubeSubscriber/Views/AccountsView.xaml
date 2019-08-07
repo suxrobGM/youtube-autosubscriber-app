@@ -12,7 +12,7 @@
              d:DesignWidth="480"
              x:Name="control">
     <Grid>
-        <Syncfusion:SfDataGrid ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}" ColumnSizer="Star" AutoGenerateColumns="False" AllowEditing="True" AllowDeleting="True" HorizontalAlignment="Left" Margin="0,50,0,0" AddNewRowPosition="Top">
+        <Syncfusion:SfDataGrid ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}" ColumnSizer="Star" AutoGenerateColumns="False" AllowEditing="False" AllowDeleting="False" HorizontalAlignment="Left" Margin="0,50,0,0" AddNewRowPosition="Top">
             <Syncfusion:SfDataGrid.Columns>
                 <Syncfusion:GridTextColumn HeaderText="Email" MappingName="Email" />
                 <Syncfusion:GridTextColumn HeaderText="Password" MappingName="Password" />

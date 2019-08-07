@@ -110,6 +110,13 @@ namespace YouTubeSubscriber.Services
 
             OnSubscribing?.Invoke($"Finished subscription process", new EventArgs());
         }
+
+        public long GetSubscribersCount(Channel channel)
+        {
+            _driver.Navigate().GoToUrl(channel.Url);
+            WaitForReady(By.Id("subscriber-count"));
+            return Channel.ParseSubscriberCount(_driver.FindElement(By.Id("subscriber-count")).Text);
+        }
         
         private bool IsElementPresent(By by)
         {

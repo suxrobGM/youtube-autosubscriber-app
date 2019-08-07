@@ -24,7 +24,10 @@
             <TextBlock TextWrapping="Wrap" Text="URL:" Height="30" Width="39" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
             <TextBox Height="24" IsReadOnly="True" Text="{Binding Channel.Url}" Width="284" Padding="0,2,0,0" FontSize="10" Cursor="No"/>
             <TextBlock TextWrapping="Wrap" Text="Subscribers:" Height="30" Width="90" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
-            <TextBox Height="24" IsReadOnly="True" Text="{Binding Channel.SubscriberCount}" Width="233" Padding="0,2,0,0" FontSize="10" Cursor="No"/>
+            <TextBox Height="24" IsReadOnly="True" Text="{Binding Channel.SubscriberCount}" Width="198" Padding="0,2,0,0" FontSize="10" Cursor="No"/>
+            <Button Command="{Binding UpdateSubscriberCountCommand}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="32" Height="25" Margin="3,3,0,0">
+                <Image Source="/YouTubeSubscriber;component/Icons/round-arrow.png" />
+            </Button>
             <TextBlock TextWrapping="Wrap" Text="Subscribed accounts:" Height="30" Width="144" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
             <Syncfusion:UpDown HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="111" Value="{Binding SubsAccounts}" MinValue="0" MaxValue="{Binding TotalAccounts}" NumberDecimalDigits="0">
                 <i:Interaction.Triggers>

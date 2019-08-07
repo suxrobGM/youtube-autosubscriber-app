@@ -1,6 +1,8 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
+using System.Linq;
 using System.Threading.Tasks;
+using YouTubeSubscriber.Data;
 using YouTubeSubscriber.Models;
 using YouTubeSubscriber.Services;
 
@@ -14,6 +16,7 @@ namespace YouTubeSubscriber.ViewModels
         private int _subsAccounts;
         private string _statusText;
         private Channel _channel;
+        private readonly ApplicationDbContext _context;
 
         public bool IsBusy { get => _isBusy; set { SetProperty(ref _isBusy, value); } }
         public int TotalAccounts { get => _totalAccounts; set { SetProperty(ref _totalAccounts, value); } }
@@ -25,18 +28,21 @@ namespace YouTubeSubscriber.ViewModels
         public DelegateCommand StartSubscriptionCommand { get; }
         public DelegateCommand StopSubscriptionCommand { get; }
         public DelegateCommand SubsAccountsChangedCommand { get; }
+        public DelegateCommand UpdateSubscriberCountCommand { get; }
 
-        public EditChannelSubscribersViewModel()
+        public EditChannelSubscribersViewModel(ApplicationDbContext context)
         {
+            _context = context;
             StatusText = "";            
 
             StartSubscriptionCommand = new DelegateCommand(() =>
-            {
-                IsBusy = true;
+            {             
                 Task.Run(() =>
                 {
+                    IsBusy = true;
+
                     using (var automatization = new Automatization())
-                    {
+                    {                        
                         automatization.OnSubscribing += Automatization_OnSubscribing;
                         //automatization.SubscribeToChannel(Channel, );
                     }
@@ -55,6 +61,29 @@ namespace YouTubeSubscriber.ViewModels
                 _valueChanged = true;
                 StartSubscriptionCommand.RaiseCanExecuteChanged();                
 
+            });
+
+            UpdateSubscriberCountCommand = new DelegateCommand(() =>
+            {
+                Task.Run(() =>
+                {
+                    StatusText += "Updating channel subscriber count...\n";
+                    IsBusy = true;
+
+                    using (var automatization = new Automatization(true))
+                    {                        
+                        var channel = _context.Channels.Where(i => i.Id == Channel.Id).First();
+                        var subscriberCount = automatization.GetSubscribersCount(channel);
+                        channel.SubscriberCount = subscriberCount;
+                        Channel.SubscriberCount = subscriberCount;
+                        RaisePropertyChanged("Channel");
+                        _context.SaveChanges();                        
+                    }
+
+                    StatusText += "Updated subscriber count\n";
+                    IsBusy = false;
+                });
+                
             });
         }
 

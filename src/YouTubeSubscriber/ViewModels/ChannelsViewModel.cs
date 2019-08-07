@@ -31,12 +31,13 @@ namespace YouTubeSubscriber.ViewModels
         public ChannelsViewModel(ApplicationDbContext context)
         {
             _context = context;
-            Channels = _context.Channels.Local.ToObservableCollection();
+            Channels = new ObservableCollection<Channel>(_context.Channels);
             //GenerateChannels();
 
             AddChannelCommand = new DelegateCommand(() =>
             {
                 var addChannelView = new AddChannelView();
+                (addChannelView.DataContext as AddChannelViewModel).Channels = Channels;
                 addChannelView.ShowDialog();
             });
 
