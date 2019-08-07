@@ -1,22 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq;
+using System.Windows;
+using System.Collections.ObjectModel;
 using Prism.Commands;
 using Prism.Mvvm;
-using System.Collections.ObjectModel;
 using YouTubeSubscriber.Data;
 using YouTubeSubscriber.Models;
 
 namespace YouTubeSubscriber.ViewModels
 {
     public class AddAccountViewModel : BindableBase
-    {
-        private string _emailField;
-        private string _passwordField;
-        private string _statusText;
+    {                
         private readonly ApplicationDbContext _context;
+        private Account _account;
+        private string _statusText;
 
-        public string EmailField { get => _emailField; set { SetProperty(ref _emailField, value); AddAccountCommand.RaiseCanExecuteChanged(); } }
-        public string PasswordField { get => _passwordField; set { SetProperty(ref _passwordField, value); AddAccountCommand.RaiseCanExecuteChanged(); } }
         public string StatusText { get => _statusText; set { SetProperty(ref _statusText, value); } }
+        public Account Account { get => _account; set { SetProperty(ref _account, value); } }
         public DelegateCommand AddAccountCommand { get; }
         public ObservableCollection<Account> Accounts { get; set; }
 
@@ -24,32 +23,43 @@ namespace YouTubeSubscriber.ViewModels
         {
             _context = context;
             StatusText = "";
+            Account = new Account();
 
             AddAccountCommand = new DelegateCommand(() =>
             {
                 var account = new Account()
                 {
-                    Email = EmailField,
-                    Password = PasswordField
+                    Email = Account.Email,
+                    Password = Account.Password
                 };
-                _context.Accounts.Add(account);
 
-                try
+                if (string.IsNullOrWhiteSpace(Account.Email))
                 {
-                    _context.SaveChanges();
-                    Accounts.Add(account);
+                    MessageBox.Show("Please fill email field");
+                    return;
                 }
-                catch (DbUpdateException)
+
+                if (string.IsNullOrWhiteSpace(Account.Password))
+                {
+                    MessageBox.Show("Please fill password field");
+                    return;
+                }
+
+                var accountFromDb = _context.Accounts.Where(i => i.Email == Account.Email).FirstOrDefault();
+
+                if (accountFromDb != null)
                 {
                     StatusText += $"ERROR: Account already exists in database\n";
                     return;
                 }
-                
-                StatusText += $"Added account to database \n{account}";
-                
-            }, CanExecuteAddCommand);
+                else
+                {
+                    _context.Accounts.Add(account);
+                    _context.SaveChanges();
+                    Accounts.Add(account);
+                    StatusText += $"Added account to database \n{account}";
+                }
+            });
         }
-
-        private bool CanExecuteAddCommand() => !string.IsNullOrWhiteSpace(EmailField) && !string.IsNullOrWhiteSpace(PasswordField);
     }
 }

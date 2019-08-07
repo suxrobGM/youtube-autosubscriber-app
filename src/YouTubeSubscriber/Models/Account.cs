@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Prism.Mvvm;
 
 namespace YouTubeSubscriber.Models
 {
-    public class Account
+    public class Account : BindableBase
     {
+        private string _email;
+        private string _password;
+        private bool _isVerified;
+
         public Account()
         {
             Id = Guid.NewGuid().ToString().Replace("-", "");
@@ -15,9 +18,9 @@ namespace YouTubeSubscriber.Models
         }
 
         public string Id { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public bool IsVerified { get; set; }
+        public string Email { get => _email; set { SetProperty(ref _email, value); } }
+        public string Password { get => _password; set { SetProperty(ref _password, value); } }
+        public bool IsVerified { get => _isVerified; set { SetProperty(ref _isVerified, value); } }
         public virtual List<ChannelAccount> SubscribedChannels { get; set; }
 
         public override string ToString()

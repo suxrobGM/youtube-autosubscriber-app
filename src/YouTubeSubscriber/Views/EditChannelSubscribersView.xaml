@@ -16,6 +16,13 @@
         ResizeMode="NoResize"
         prism:ViewModelLocator.AutoWireViewModel="True" 
         Icon="/YouTubeSubscriber;component/youtube.ico">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <prism:InvokeCommandAction Command="{Binding WindowLoadedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
     <Grid>
         <TextBlock TextWrapping="Wrap" Text="YouTube Channel" Height="30" FontWeight="Bold" Padding="0,3,0,0" FontSize="14" Margin="102,10,127,380"/>
         <WrapPanel Margin="10,45,10,221">
@@ -29,13 +36,7 @@
                 <Image Source="/YouTubeSubscriber;component/Icons/round-arrow.png" />
             </Button>
             <TextBlock TextWrapping="Wrap" Text="Subscribed accounts:" Height="30" Width="144" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
-            <Syncfusion:UpDown HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="111" Value="{Binding SubsAccounts}" MinValue="0" MaxValue="{Binding TotalAccounts}" NumberDecimalDigits="0">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="ValueChanged">
-                        <prism:InvokeCommandAction Command="{Binding SubsAccountsChangedCommand}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Syncfusion:UpDown>
+            <Syncfusion:UpDown HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="111" Value="{Binding SubsAccounts}" MinValue="0" MaxValue="{Binding TotalAccounts}" NumberDecimalDigits="0" />
             <TextBlock TextWrapping="Wrap" Text="Total accounts:" Height="30" Width="107" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
             <TextBlock TextWrapping="Wrap" Text="{Binding TotalAccounts}" Height="30" Width="170" FontWeight="Bold" Padding="0,6,0,0"/>
         </WrapPanel>

@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Prism.Commands;
 using Prism.Mvvm;
 using YouTubeSubscriber.Data;
@@ -71,21 +71,22 @@ namespace YouTubeSubscriber.ViewModels
             {
                 UrlField = "";
                 _channelVerified = false;
-                _context.Channels.Add(_channel);
+                
+                var channelFromDb = _context.Channels.Where(i => i.Url == _channel.Url).FirstOrDefault();
 
-                try
-                {
-                    _context.SaveChanges();
-                    Channels.Add(_channel);
-                }
-                catch (DbUpdateException)
+                if (channelFromDb != null)
                 {
                     StatusText += "ERROR: Channel already exists in database\n";
                     return;
                 }
-
-                StatusText += $"Added channel to database \n{_channel}";
-                AddChannelCommand.RaiseCanExecuteChanged();
+                else
+                {
+                    _context.Channels.Add(_channel);
+                    _context.SaveChanges();
+                    Channels.Add(_channel);
+                    StatusText += $"Added channel to database \n{_channel}";
+                    AddChannelCommand.RaiseCanExecuteChanged();
+                }               
 
             }, CanExecuteAddCommand);
         }

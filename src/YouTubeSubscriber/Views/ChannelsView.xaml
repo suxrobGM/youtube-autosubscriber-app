@@ -11,7 +11,7 @@
              d:DesignHeight="500" 
              d:DesignWidth="470">
     <Grid>
-        <Syncfusion:SfDataGrid ItemsSource="{Binding Channels}" SelectedItem="{Binding SelectedChannel}" AutoGenerateColumns="False" AllowEditing="False" AllowDeleting="False" AddNewRowPosition="Top" HorizontalAlignment="Left" Margin="0,50,0,0">
+        <Syncfusion:SfDataGrid ItemsSource="{Binding Channels}" SelectedItem="{Binding SelectedChannel}" AutoGenerateColumns="False" AllowEditing="False" AllowDeleting="False" HorizontalAlignment="Left" Margin="0,50,0,0">
             <Syncfusion:SfDataGrid.Columns>
                 <Syncfusion:GridTextColumn HeaderText="Title" MappingName="Title" />
                 <Syncfusion:GridTextColumn HeaderText="Subscriber Count" MappingName="SubscriberCount" />

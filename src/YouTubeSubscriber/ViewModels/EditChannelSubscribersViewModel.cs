@@ -1,7 +1,7 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using Prism.Commands;
+using Prism.Mvvm;
 using YouTubeSubscriber.Data;
 using YouTubeSubscriber.Models;
 using YouTubeSubscriber.Services;
@@ -14,26 +14,36 @@ namespace YouTubeSubscriber.ViewModels
         private bool _valueChanged;
         private int _totalAccounts;
         private int _subsAccounts;
+        private int _initSubsAccountsValue;
         private string _statusText;
         private Channel _channel;
         private readonly ApplicationDbContext _context;
 
         public bool IsBusy { get => _isBusy; set { SetProperty(ref _isBusy, value); } }
         public int TotalAccounts { get => _totalAccounts; set { SetProperty(ref _totalAccounts, value); } }
-        public int SubsAccounts { get => _subsAccounts; set { SetProperty(ref _subsAccounts, value); } }
         public string StatusText { get => _statusText; set { SetProperty(ref _statusText, value); } }
         public Channel Channel { get => _channel; set { SetProperty(ref _channel, value); } }
-        
+        public int SubsAccounts
+        {
+            get => _subsAccounts;
+            set
+            {
+                SetProperty(ref _subsAccounts, value);
+                _valueChanged = true;
+                StartSubscriptionCommand.RaiseCanExecuteChanged();
+            }
+        }
+
 
         public DelegateCommand StartSubscriptionCommand { get; }
         public DelegateCommand StopSubscriptionCommand { get; }
-        public DelegateCommand SubsAccountsChangedCommand { get; }
         public DelegateCommand UpdateSubscriberCountCommand { get; }
+        public DelegateCommand WindowLoadedCommand { get; }
 
         public EditChannelSubscribersViewModel(ApplicationDbContext context)
         {
-            _context = context;
-            StatusText = "";            
+            _context = context;            
+            StatusText = "";        
 
             StartSubscriptionCommand = new DelegateCommand(() =>
             {             
@@ -54,14 +64,7 @@ namespace YouTubeSubscriber.ViewModels
             {
                 IsBusy = false;
 
-            }, CanExecuteStopSubscription);
-
-            SubsAccountsChangedCommand = new DelegateCommand(() =>
-            {
-                _valueChanged = true;
-                StartSubscriptionCommand.RaiseCanExecuteChanged();                
-
-            });
+            }, CanExecuteStopSubscription);            
 
             UpdateSubscriberCountCommand = new DelegateCommand(() =>
             {
@@ -69,6 +72,7 @@ namespace YouTubeSubscriber.ViewModels
                 {
                     StatusText += "Updating channel subscriber count...\n";
                     IsBusy = true;
+                    var oldValue = Channel.SubscriberCount;
 
                     using (var automatization = new Automatization(true))
                     {                        
@@ -76,14 +80,20 @@ namespace YouTubeSubscriber.ViewModels
                         var subscriberCount = automatization.GetSubscribersCount(channel);
                         channel.SubscriberCount = subscriberCount;
                         Channel.SubscriberCount = subscriberCount;
-                        RaisePropertyChanged("Channel");
                         _context.SaveChanges();                        
                     }
 
-                    StatusText += "Updated subscriber count\n";
+                    StatusText += $"Updated subscriber count from {oldValue} to {Channel.SubscriberCount}\n";
                     IsBusy = false;
                 });
                 
+            });
+
+            WindowLoadedCommand = new DelegateCommand(() =>
+            {
+                SubsAccounts = _context.Channels.Where(i => i.Id == Channel.Id).First().SubscribedAccounts.Count;
+                TotalAccounts = _context.Accounts.Count();
+                _initSubsAccountsValue = SubsAccounts;
             });
         }
 

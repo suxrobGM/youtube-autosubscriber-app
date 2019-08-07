@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using Prism.Mvvm;
 
 namespace YouTubeSubscriber.Models
 {
-    public class Channel
+    public class Channel : BindableBase
     {
+        private string _title;
+        private string _url;
+        private long _subscriberCount;
+
         public Channel()
         {
             Id = Guid.NewGuid().ToString().Replace("-", "");
@@ -14,9 +19,9 @@ namespace YouTubeSubscriber.Models
         }
 
         public string Id { get; set; }
-        public string Title { get; set; }
-        public string Url { get; set; }
-        public long SubscriberCount { get; set; }
+        public string Title { get => _title; set { SetProperty(ref _title, value); } }
+        public string Url { get => _url; set { SetProperty(ref _url, value); } }
+        public long SubscriberCount { get => _subscriberCount; set { SetProperty(ref _subscriberCount, value); } }
         public virtual List<ChannelAccount> SubscribedAccounts { get; set; }
 
         public override string ToString()
