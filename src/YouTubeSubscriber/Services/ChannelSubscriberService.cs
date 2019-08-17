@@ -11,11 +11,11 @@ namespace YouTubeSubscriber.Services
     {
         private readonly IWebDriver _driver;
         private readonly Channel _channel;
-        public event EventHandler OnSubscribing;
+        public event EventHandler OnProcessing;
 
-        public ChannelSubscriberService(Channel channel, bool headlessChrome = false)
+        public ChannelSubscriberService(Channel channel, bool useHeadlessChrome = false)
         {
-            if (headlessChrome)
+            if (useHeadlessChrome)
             {
                 var chromeOptions = new ChromeOptions();
                 chromeOptions.AddArguments("headless");
@@ -49,11 +49,11 @@ namespace YouTubeSubscriber.Services
         {
             var signInUrl = "https://accounts.google.com/signin/v2/identifier?service=youtube&uilel=3&passive=true&continue=https://www.youtube.com/signin?action_handle_signin=true&app=desktop&hl=en&next=%2F&hl=en&flowName=GlifWebSignIn&flowEntry=ServiceLogin";
 
-            OnSubscribing?.Invoke($"Starting subscription process", new EventArgs());
+            OnProcessing?.Invoke($"Starting subscription process", new EventArgs());
 
             for (int i = 0; i < accounts.Length; i++)                     
             {
-                OnSubscribing?.Invoke($"Trying to login account {accounts[i].Email}", new EventArgs());
+                OnProcessing?.Invoke($"Trying to login account {accounts[i].Email}", new EventArgs());
 
                 _driver.Navigate().GoToUrl(signInUrl);
                 WaitForReady(By.Id("identifierNext"));
@@ -64,7 +64,7 @@ namespace YouTubeSubscriber.Services
                 if (IsElementPresent(By.XPath("//div[@aria-live='assertive' and @aria-atomic='true']/div")))
                 {
                     var errorMsg = $"Unregistered email, couldn't find Google account {accounts[i].Email}";
-                    OnSubscribing?.Invoke(errorMsg, new EventArgs());
+                    OnProcessing?.Invoke(errorMsg, new EventArgs());
                     continue;
                     //throw new Exception(errorMsg);
                 }
@@ -77,7 +77,7 @@ namespace YouTubeSubscriber.Services
                 if (IsElementPresent(By.XPath("//div[@aria-live='assertive']/div[2]")))
                 {
                     var errorMsg = $"Wrong password for account {accounts[i].Email}";
-                    OnSubscribing?.Invoke(errorMsg, new EventArgs());
+                    OnProcessing?.Invoke(errorMsg, new EventArgs());
                     continue;
                     //throw new Exception(errorMsg);
                 }
@@ -99,14 +99,14 @@ namespace YouTubeSubscriber.Services
 
                 if (IsElementPresent(By.Id("notification-preference-toggle-button")))
                 {
-                    OnSubscribing?.Invoke($"Already subscribed account {accounts[i].Email}", new EventArgs());
+                    OnProcessing?.Invoke($"Already subscribed account {accounts[i].Email}", new EventArgs());
                     continue;
                 }
                 else
                 {
                     _driver.FindElement(By.Id("subscribe-button")).Click();
                     int count = i + 1;
-                    OnSubscribing?.Invoke($"Successfully subscribed account {accounts[i].Email} #{count}", new EventArgs());
+                    OnProcessing?.Invoke($"Successfully subscribed account {accounts[i].Email} #{count}", new EventArgs());
                     var channelAccount = new ChannelAccount()
                     {
                         AccountId = accounts[i].Id,
@@ -118,7 +118,7 @@ namespace YouTubeSubscriber.Services
                 }             
             }
 
-            OnSubscribing?.Invoke($"Finished subscription process", new EventArgs());
+            OnProcessing?.Invoke($"Finished subscription process", new EventArgs());
         }
 
         public long GetSubscribersCount()
