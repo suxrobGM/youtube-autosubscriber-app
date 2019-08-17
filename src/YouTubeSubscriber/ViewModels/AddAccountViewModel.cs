@@ -58,6 +58,8 @@ namespace YouTubeSubscriber.ViewModels
                     _context.SaveChanges();
                     Accounts.Add(account);
                     StatusText += $"Added account to database \n{account}";
+                    Account.Email = "";
+                    Account.Password = "";
                 }
             });
         }

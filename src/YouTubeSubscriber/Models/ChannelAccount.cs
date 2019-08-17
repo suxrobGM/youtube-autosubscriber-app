@@ -13,5 +13,16 @@ namespace YouTubeSubscriber.Models
 
         public string AccountId { get; set; }
         public virtual Account Account { get; set; }
+
+        public override int GetHashCode()
+        {
+            return ChannelId.GetHashCode() + AccountId.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            var channelAccount = obj as ChannelAccount;
+            return channelAccount.AccountId == AccountId && channelAccount.ChannelId == ChannelId;
+        }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Prism.Mvvm;
+using YouTubeSubscriber.Data;
 
 namespace YouTubeSubscriber.Models
 {
@@ -32,6 +34,20 @@ namespace YouTubeSubscriber.Models
             builder.AppendLine($" IsVerified: {IsVerified}");
 
             return builder.ToString();
+        }
+
+        public static Account[] GetUnsubcribedAccounts(ApplicationDbContext context, Channel channel, int count)
+        {           
+            var accounts = context.Accounts.Where(i => !i.SubscribedChannels.Where(x => x.ChannelId == channel.Id).Any()).Take(count);
+
+            return accounts.ToArray();
+        }
+
+        public static Account[] GetSubcribedAccounts(ApplicationDbContext context, Channel channel, int count)
+        {
+            var accounts = context.Accounts.Where(i => i.SubscribedChannels.Where(x => x.ChannelId == channel.Id).Any()).Take(count);
+
+            return accounts.ToArray();
         }
     }
 }

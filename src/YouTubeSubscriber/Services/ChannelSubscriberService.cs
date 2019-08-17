@@ -7,12 +7,13 @@ using YouTubeSubscriber.Models;
 
 namespace YouTubeSubscriber.Services
 {
-    public class Automatization : IDisposable
+    public class ChannelSubscriberService : IDisposable
     {
         private readonly IWebDriver _driver;
+        private readonly Channel _channel;
         public event EventHandler OnSubscribing;
 
-        public Automatization(bool headlessChrome = false)
+        public ChannelSubscriberService(Channel channel, bool headlessChrome = false)
         {
             if (headlessChrome)
             {
@@ -26,24 +27,25 @@ namespace YouTubeSubscriber.Services
             {
                 _driver = new ChromeDriver();
             }
+            _channel = channel;
         }
 
-        public bool VerifyChannel(ref Channel channel)
+        public bool VerifyChannel()
         {
             var isYouTubeChannel = false;
-            _driver.Navigate().GoToUrl(channel.Url);
+            _driver.Navigate().GoToUrl(_channel.Url);
 
             if (IsElementPresent(By.Id("subscriber-count")))
             {
                 isYouTubeChannel = true;
-                channel.SubscriberCount = Channel.ParseSubscriberCount(_driver.FindElement(By.Id("subscriber-count")).Text);
-                channel.Title = _driver.FindElement(By.Id("channel-title")).Text;
+                _channel.SubscriberCount = Channel.ParseSubscriberCount(_driver.FindElement(By.Id("subscriber-count")).Text);
+                _channel.Title = _driver.FindElement(By.Id("channel-title")).Text;
             }
             
             return isYouTubeChannel;
         }
 
-        public void SubscribeToChannel(Channel channel, ref Account[] accounts)
+        public void SubscribeToChannel(ref Account[] accounts)
         {
             var signInUrl = "https://accounts.google.com/signin/v2/identifier?service=youtube&uilel=3&passive=true&continue=https://www.youtube.com/signin?action_handle_signin=true&app=desktop&hl=en&next=%2F&hl=en&flowName=GlifWebSignIn&flowEntry=ServiceLogin";
 
@@ -92,7 +94,7 @@ namespace YouTubeSubscriber.Services
                     _driver.FindElement(By.Id("identity-prompt-confirm-button")).Click();
                 }
 
-                _driver.Navigate().GoToUrl(channel.Url);
+                _driver.Navigate().GoToUrl(_channel.Url);
                 WaitForReady(By.Id("subscribe-button"));
 
                 if (IsElementPresent(By.Id("notification-preference-toggle-button")))
@@ -105,15 +107,23 @@ namespace YouTubeSubscriber.Services
                     _driver.FindElement(By.Id("subscribe-button")).Click();
                     int count = i + 1;
                     OnSubscribing?.Invoke($"Successfully subscribed account {accounts[i].Email} #{count}", new EventArgs());
+                    var channelAccount = new ChannelAccount()
+                    {
+                        AccountId = accounts[i].Id,
+                        Account = accounts[i],
+                        ChannelId = _channel.Id,
+                        Channel = _channel
+                    };  
+                    accounts[i].SubscribedChannels.Add(channelAccount);
                 }             
             }
 
             OnSubscribing?.Invoke($"Finished subscription process", new EventArgs());
         }
 
-        public long GetSubscribersCount(Channel channel)
+        public long GetSubscribersCount()
         {
-            _driver.Navigate().GoToUrl(channel.Url);
+            _driver.Navigate().GoToUrl(_channel.Url);
             WaitForReady(By.Id("subscriber-count"));
             return Channel.ParseSubscriberCount(_driver.FindElement(By.Id("subscriber-count")).Text);
         }

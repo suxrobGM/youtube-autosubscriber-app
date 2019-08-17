@@ -46,15 +46,14 @@ namespace YouTubeSubscriber.ViewModels
                 {
                     IsBusy = true;
                     StatusText += "Verifying channel...\n";
-
-                    using (var automatization = new Automatization(true))
+                    _channel = new Channel()
                     {
-                        _channel = new Channel()
-                        {
-                            Url = UrlField,
-                        };
+                        Url = UrlField,
+                    };
 
-                        if (automatization.VerifyChannel(ref _channel))
+                    using (var subscriberService = new ChannelSubscriberService(_channel, true))
+                    {
+                        if (subscriberService.VerifyChannel())
                         {
                             StatusText += "Channel verified now you can add to database!\n";
                             StatusText += _channel.ToString() + "\n";
@@ -69,7 +68,6 @@ namespace YouTubeSubscriber.ViewModels
 
             AddChannelCommand = new DelegateCommand(() =>
             {
-                UrlField = "";
                 _channelVerified = false;
                 
                 var channelFromDb = _context.Channels.Where(i => i.Url == _channel.Url).FirstOrDefault();
@@ -85,6 +83,7 @@ namespace YouTubeSubscriber.ViewModels
                     _context.SaveChanges();
                     Channels.Add(_channel);
                     StatusText += $"Added channel to database \n{_channel}";
+                    UrlField = "";
                     AddChannelCommand.RaiseCanExecuteChanged();
                 }               
 
