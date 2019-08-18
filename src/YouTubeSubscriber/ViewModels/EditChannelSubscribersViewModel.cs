@@ -22,6 +22,7 @@ namespace YouTubeSubscriber.ViewModels
 
         public bool IsBusy { get => _isBusy; set { SetProperty(ref _isBusy, value); } }
         public int TotalAccounts { get => _totalAccounts; set { SetProperty(ref _totalAccounts, value); } }
+        public int InitSubsAccountsCount { get => _initSubsAccountsValue; set { SetProperty(ref _initSubsAccountsValue, value); } }
         public string StatusText { get => _statusText; set { SetProperty(ref _statusText, value); } }
         public Channel Channel { get => _channel; set { SetProperty(ref _channel, value); } }
         public int SubsAccountsCount
@@ -51,19 +52,19 @@ namespace YouTubeSubscriber.ViewModels
                 Task.Run(() =>
                 {
                     IsBusy = true;
-                    int accountsToProcessCount = _initSubsAccountsValue - SubsAccountsCount;
+                    int accountsToProcessCount = SubsAccountsCount - InitSubsAccountsCount;
 
                     using (var subscriberService = new ChannelSubscriberService(_context, Channel))
                     {
-                        if (accountsToProcessCount > _initSubsAccountsValue) // Start subscribing process
+                        if (accountsToProcessCount > InitSubsAccountsCount) // Start subscribing process
                         {
-                            var accounts = subscriberService.GetUnsubcribedAccounts(accountsToProcessCount);
                             subscriberService.OnProcessing += Automatization_OnProcessing;
-                            subscriberService.SubscribeToChannel(accounts);
+                            subscriberService.SubscribeToChannel(accountsToProcessCount);
                         }
-                        else if (accountsToProcessCount < _initSubsAccountsValue) // Start unsubscribing process
+                        else if (accountsToProcessCount < InitSubsAccountsCount) // Start unsubscribing process
                         {
-
+                            //subscriberService.OnProcessing += Automatization_OnProcessing;
+                            //subscriberService.UnsubscribeToChannel(accountsToProcessCount);
                         }
 
                         UpdateSubscriberCountCommand.Execute();
@@ -103,9 +104,10 @@ namespace YouTubeSubscriber.ViewModels
 
             WindowLoadedCommand = new DelegateCommand(() =>
             {
-                SubsAccountsCount = _context.Channels.Where(i => i.Id == Channel.Id).First().SubscribedAccounts.Count;
+                var subscribedAccounts = _context.Accounts.Where(i => i.SubscribedChannels.Where(x => x.ChannelId == _channel.Id).Any()).Count();
                 TotalAccounts = _context.Accounts.Count();
-                _initSubsAccountsValue = SubsAccountsCount;
+                SubsAccountsCount = subscribedAccounts;
+                InitSubsAccountsCount = subscribedAccounts;
             });
         }
 

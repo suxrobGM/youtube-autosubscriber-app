@@ -11,7 +11,7 @@
         mc:Ignorable="d"
         Title="Edit Subscribers" 
         Height="450" 
-        Width="350" 
+        Width="360" 
         WindowStartupLocation="CenterScreen" 
         ResizeMode="NoResize"
         prism:ViewModelLocator.AutoWireViewModel="True" 
@@ -25,23 +25,25 @@
     
     <Grid>
         <TextBlock TextWrapping="Wrap" Text="YouTube Channel" Height="30" FontWeight="Bold" Padding="0,3,0,0" FontSize="14" Margin="102,10,127,380"/>
-        <WrapPanel Margin="10,45,10,221">
+        <WrapPanel Margin="10,45,-0.4,221">
             <TextBlock TextWrapping="Wrap" Text="Title:" Height="30" Width="39" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
-            <TextBox Height="24" IsReadOnly="True" Text="{Binding Channel.Title}" Width="284" Padding="0,2,0,0" FontSize="10" Cursor="No"/>
+            <TextBox Height="24" IsReadOnly="True" Text="{Binding Channel.Title}" Width="300" Padding="0,2,0,0" FontSize="10" Cursor="No"/>
             <TextBlock TextWrapping="Wrap" Text="URL:" Height="30" Width="39" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
-            <TextBox Height="24" IsReadOnly="True" Text="{Binding Channel.Url}" Width="284" Padding="0,2,0,0" FontSize="10" Cursor="No"/>
+            <TextBox Height="24" IsReadOnly="True" Text="{Binding Channel.Url}" Width="300" Padding="0,2,0,0" FontSize="10" Cursor="No"/>
             <TextBlock TextWrapping="Wrap" Text="Subscribers:" Height="30" Width="90" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
-            <TextBox Height="24" IsReadOnly="True" Text="{Binding Channel.SubscriberCount}" Width="198" Padding="0,2,0,0" FontSize="10" Cursor="No"/>
+            <TextBox Height="24" IsReadOnly="True" Text="{Binding Channel.SubscriberCount}" Width="214" Padding="0,2,0,0" FontSize="10" Cursor="No"/>
             <Button Command="{Binding UpdateSubscriberCountCommand}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="32" Height="25" Margin="3,3,0,0">
                 <Image Source="/YouTubeSubscriber;component/Icons/round-arrow.png" />
             </Button>
             <TextBlock TextWrapping="Wrap" Text="Subscribed accounts:" Height="30" Width="144" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
-            <Syncfusion:UpDown HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="111" Value="{Binding SubsAccountsCount}" MinValue="0" MaxValue="{Binding TotalAccounts}" NumberDecimalDigits="0" />
+            <Syncfusion:UpDown HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="90" Value="{Binding SubsAccountsCount}" MinValue="0" MaxValue="{Binding TotalAccounts}" NumberDecimalDigits="0" />
+            <TextBlock TextWrapping="Wrap" Text="Initial value:" Height="18" Width="55" Padding="0" Margin="3,0,0,0" FontSize="10"/>
+            <TextBlock TextWrapping="Wrap" Text="{Binding InitSubsAccountsCount}" Height="17" Width="50" Padding="0" FontSize="10"/>
             <TextBlock TextWrapping="Wrap" Text="Total accounts:" Height="30" Width="107" FontWeight="Bold" Padding="0,3,0,0" FontSize="14"/>
             <TextBlock TextWrapping="Wrap" Text="{Binding TotalAccounts}" Height="30" Width="170" FontWeight="Bold" Padding="0,6,0,0"/>
         </WrapPanel>
         <Button Content="Start Process" Command="{Binding StartProcessCommand}" HorizontalAlignment="Left" Margin="10,199,0,0" VerticalAlignment="Top" Width="90" Height="25"/>
-        <Button Content="Stop Process" Command="{Binding StopProcessCommand}" HorizontalAlignment="Left" Margin="105,199,0,0" VerticalAlignment="Top" Width="90" Height="25"/>
+        <Button Content="Stop Process" Command="{Binding StopProcessCommand}" HorizontalAlignment="Left" Margin="105,199,0,0" VerticalAlignment="Top" Width="100" Height="25"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,229,0,0" TextWrapping="Wrap" Text="Status:" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
         <TextBox IsReadOnly="True" HorizontalAlignment="Left" Height="157" Margin="10,253,0,0" TextWrapping="Wrap" Text="{Binding StatusText}" VerticalAlignment="Top" Width="324"/>
         <Syncfusion:SfBusyIndicator ViewboxHeight="20" ViewboxWidth="40" Margin="60,227,0,0" Content="" IsBusy="{Binding IsBusy}"  Foreground="#FF17B01E"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="28" Height="26" AnimationType="SingleCircle"/>

@@ -19,37 +19,24 @@ namespace YouTubeSubscriber.Services
 
         public ChannelSubscriberService(IChannelAccountContext context, Channel channel, bool useHeadlessChrome = false)
         {
+            var chromeOptions = new ChromeOptions();
             if (useHeadlessChrome)
-            {
-                var chromeOptions = new ChromeOptions();
-                chromeOptions.AddArguments("headless");
+            {                
+                chromeOptions.AddArgument("headless");
                 var driverService = ChromeDriverService.CreateDefaultService();
                 driverService.HideCommandPromptWindow = true;
                 _driver = new ChromeDriver(driverService, chromeOptions);
             }
             else
             {
-                _driver = new ChromeDriver();
+                chromeOptions.AddArgument("--disable-notifications");
+                _driver = new ChromeDriver(chromeOptions);
             }
 
             _context = context;
             _channel = channel;
         }
-
-        public Account[] GetSubcribedAccounts(int count)
-        {
-            var accounts = _context.Accounts.Where(i => i.SubscribedChannels.Where(x => x.ChannelId == _channel.Id).Any()).Take(count);
-
-            return accounts.ToArray();
-        }
-
-        public Account[] GetUnsubcribedAccounts(int count)
-        {
-            var accounts = _context.Accounts.Where(i => !i.SubscribedChannels.Where(x => x.ChannelId == _channel.Id).Any()).Take(count);
-
-            return accounts.ToArray();
-        }
-
+       
         public bool VerifyChannel()
         {
             var isYouTubeChannel = false;
@@ -65,80 +52,95 @@ namespace YouTubeSubscriber.Services
             return isYouTubeChannel;
         }
 
-        public void SubscribeToChannel(Account[] accounts)
+        public void SubscribeToChannel(int count)
         {
             var signInUrl = "https://accounts.google.com/signin/v2/identifier?service=youtube&uilel=3&passive=true&continue=https://www.youtube.com/signin?action_handle_signin=true&app=desktop&hl=en&next=%2F&hl=en&flowName=GlifWebSignIn&flowEntry=ServiceLogin";
+            var unsubscribedAccounts = _context.Accounts.Where(i => !i.SubscribedChannels.Where(x => x.ChannelId == _channel.Id).Any()).Take(count);
 
             OnProcessing?.Invoke($"Starting subscription process", new EventArgs());
-
-            for (int i = 0; i < accounts.Length; i++)                     
+            int subscribedAccountsCount = 0;
+            foreach (var unsubscribedAccount in unsubscribedAccounts)
             {
-                OnProcessing?.Invoke($"Trying to login account {accounts[i].Email}", new EventArgs());
+                OnProcessing?.Invoke($"Trying to login account {unsubscribedAccount.Email}", new EventArgs());
 
+                Thread.Sleep(500);
                 _driver.Navigate().GoToUrl(signInUrl);
                 WaitForReady(By.Id("identifierNext"));
-                _driver.FindElement(By.Id("identifierId")).SendKeys(accounts[i].Email);
+                _driver.FindElement(By.Id("identifierId")).SendKeys(unsubscribedAccount.Email);
                 _driver.FindElement(By.Id("identifierNext")).Click();
                 Thread.Sleep(1500);
 
                 if (IsElementPresent(By.XPath("//div[@aria-live='assertive' and @aria-atomic='true']/div")))
                 {
-                    var errorMsg = $"Unregistered email, couldn't find Google account {accounts[i].Email}";
+                    var errorMsg = $"Unregistered email, couldn't find Google account {unsubscribedAccount.Email}";
                     OnProcessing?.Invoke(errorMsg, new EventArgs());
                     continue;
                     //throw new Exception(errorMsg);
                 }
 
                 WaitForReady(By.Id("passwordNext"));
-                _driver.FindElement(By.Name("password")).SendKeys(accounts[i].Password);
+                _driver.FindElement(By.Name("password")).SendKeys(unsubscribedAccount.Password);
                 _driver.FindElement(By.Id("passwordNext")).Click();
                 Thread.Sleep(1500);
 
                 if (IsElementPresent(By.XPath("//div[@aria-live='assertive']/div[2]")))
                 {
-                    var errorMsg = $"Wrong password for account {accounts[i].Email}";
+                    var errorMsg = $"Wrong password for account {unsubscribedAccount.Email}";
                     OnProcessing?.Invoke(errorMsg, new EventArgs());
                     continue;
                     //throw new Exception(errorMsg);
                 }
 
-                if (!accounts[i].IsVerified)
+                if (!unsubscribedAccount.IsVerified)
                 {
-                    accounts[i].IsVerified = true;
+                    unsubscribedAccount.IsVerified = true;
                 }
 
-                WaitForReady(By.Id("footer-container"));
+                WaitForReady(By.Id("content"));
 
                 if (IsElementPresent(By.Id("identity-prompt-confirm-button")))
                 {
+                    _driver.FindElement(By.Id("dont_ask_again")).Click();
+                    Thread.Sleep(500);
                     _driver.FindElement(By.Id("identity-prompt-confirm-button")).Click();
                 }
 
                 _driver.Navigate().GoToUrl(_channel.Url);
                 WaitForReady(By.Id("subscribe-button"));
 
-                if (IsElementPresent(By.Id("notification-preference-toggle-button")))
+                if (IsElementPresent(By.XPath("//*[@id='subscribe-button']/.//paper-button[@subscribed]")))
                 {
-                    OnProcessing?.Invoke($"Already subscribed account {accounts[i].Email}", new EventArgs());
+                    OnProcessing?.Invoke($"Already subscribed account {unsubscribedAccount.Email}", new EventArgs());
                     continue;
                 }
                 else
                 {
                     _driver.FindElement(By.Id("subscribe-button")).Click();
-                    int count = i + 1;
-                    OnProcessing?.Invoke($"Successfully subscribed account {accounts[i].Email} #{count}", new EventArgs());
+                    OnProcessing?.Invoke($"Successfully subscribed account {unsubscribedAccount.Email} #{++subscribedAccountsCount}", new EventArgs());
                     var channelAccount = new ChannelAccount()
                     {
-                        AccountId = accounts[i].Id,
-                        Account = accounts[i],
+                        AccountId = unsubscribedAccount.Id,
+                        Account = unsubscribedAccount,
                         ChannelId = _channel.Id,
                         Channel = _channel
-                    };  
-                    accounts[i].SubscribedChannels.Add(channelAccount);
-                }             
-            }
+                    };
+                    unsubscribedAccount.SubscribedChannels.Add(channelAccount);
+                }
+
+                _context.SaveChanges();
+            }          
 
             OnProcessing?.Invoke($"Finished subscription process", new EventArgs());
+        }
+
+        public void UnsubscribeToChannel(int count)
+        {
+            var signInUrl = "https://accounts.google.com/signin/v2/identifier?service=youtube&uilel=3&passive=true&continue=https://www.youtube.com/signin?action_handle_signin=true&app=desktop&hl=en&next=%2F&hl=en&flowName=GlifWebSignIn&flowEntry=ServiceLogin";
+            var subscribedAccounts = _context.Accounts.Where(i => i.SubscribedChannels.Where(x => x.ChannelId == _channel.Id).Any()).Take(count);
+            OnProcessing?.Invoke($"Starting unsubscription process", new EventArgs());
+            int unsubscribedAccountsCount = 0;
+
+
         }
 
         public long GetSubscribersCount()

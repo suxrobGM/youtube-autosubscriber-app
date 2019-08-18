@@ -49,5 +49,10 @@ namespace YouTubeSubscriber.Data
                     .OnDelete(DeleteBehavior.SetNull);
             });
         }
+
+        void IChannelAccountContext.SaveChanges()
+        {
+            this.SaveChanges();
+        }
     }
 }

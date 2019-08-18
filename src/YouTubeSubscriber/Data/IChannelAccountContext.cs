@@ -7,5 +7,6 @@ namespace YouTubeSubscriber.Data
     {
         DbSet<Account> Accounts { get; set; }
         DbSet<Channel> Channels { get; set; }
+        void SaveChanges();
     }
 }
