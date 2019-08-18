@@ -269,6 +269,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\ApplicationDbContext.cs" />
+    <Compile Include="Data\IChannelAccountContext.cs" />
     <Compile Include="Helpers\ExcelParser.cs" />
     <Compile Include="Migrations\20190807080410_created_database.cs" />
     <Compile Include="Migrations\20190807080410_created_database.designer.cs">

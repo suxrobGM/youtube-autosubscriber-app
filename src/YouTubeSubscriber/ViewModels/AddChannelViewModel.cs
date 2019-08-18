@@ -51,7 +51,7 @@ namespace YouTubeSubscriber.ViewModels
                         Url = UrlField,
                     };
 
-                    using (var subscriberService = new ChannelSubscriberService(_channel, true))
+                    using (var subscriberService = new ChannelSubscriberService(_context, _channel, true))
                     {
                         if (subscriberService.VerifyChannel())
                         {

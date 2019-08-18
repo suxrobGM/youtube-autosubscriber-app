@@ -3,7 +3,7 @@ using YouTubeSubscriber.Models;
 
 namespace YouTubeSubscriber.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : DbContext, IChannelAccountContext
     {
         public ApplicationDbContext()
         {

@@ -52,21 +52,21 @@ namespace YouTubeSubscriber.ViewModels
                 {
                     IsBusy = true;
                     int accountsToProcessCount = _initSubsAccountsValue - SubsAccountsCount;
-                    
-                    using (var subscriberService = new ChannelSubscriberService(Channel))
+
+                    using (var subscriberService = new ChannelSubscriberService(_context, Channel))
                     {
                         if (accountsToProcessCount > _initSubsAccountsValue) // Start subscribing process
                         {
-                            var accounts = Account.GetUnsubcribedAccounts(_context, Channel, accountsToProcessCount);
+                            var accounts = subscriberService.GetUnsubcribedAccounts(accountsToProcessCount);
                             subscriberService.OnProcessing += Automatization_OnProcessing;
-                            subscriberService.SubscribeToChannel(ref accounts);
+                            subscriberService.SubscribeToChannel(accounts);
                         }
                         else if (accountsToProcessCount < _initSubsAccountsValue) // Start unsubscribing process
                         {
 
                         }
-                        
-                        Channel.SubscriberCount = subscriberService.GetSubscribersCount();
+
+                        UpdateSubscriberCountCommand.Execute();
                     }
                 });
 
@@ -87,7 +87,7 @@ namespace YouTubeSubscriber.ViewModels
                     var oldValue = Channel.SubscriberCount;
                     var channel = _context.Channels.Where(i => i.Id == Channel.Id).First();
 
-                    using (var subscriberService = new ChannelSubscriberService(channel, true))
+                    using (var subscriberService = new ChannelSubscriberService(_context, channel, true))
                     {                                            
                         var subscriberCount = subscriberService.GetSubscribersCount();
                         channel.SubscriberCount = subscriberCount;

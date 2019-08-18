@@ -1,19 +1,23 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using YouTubeSubscriber.Data;
 using YouTubeSubscriber.Models;
 
 namespace YouTubeSubscriber.Services
 {
     public class ChannelSubscriberService : IDisposable
     {
+        private readonly IChannelAccountContext _context;
         private readonly IWebDriver _driver;
         private readonly Channel _channel;
+
         public event EventHandler OnProcessing;
 
-        public ChannelSubscriberService(Channel channel, bool useHeadlessChrome = false)
+        public ChannelSubscriberService(IChannelAccountContext context, Channel channel, bool useHeadlessChrome = false)
         {
             if (useHeadlessChrome)
             {
@@ -27,7 +31,23 @@ namespace YouTubeSubscriber.Services
             {
                 _driver = new ChromeDriver();
             }
+
+            _context = context;
             _channel = channel;
+        }
+
+        public Account[] GetSubcribedAccounts(int count)
+        {
+            var accounts = _context.Accounts.Where(i => i.SubscribedChannels.Where(x => x.ChannelId == _channel.Id).Any()).Take(count);
+
+            return accounts.ToArray();
+        }
+
+        public Account[] GetUnsubcribedAccounts(int count)
+        {
+            var accounts = _context.Accounts.Where(i => !i.SubscribedChannels.Where(x => x.ChannelId == _channel.Id).Any()).Take(count);
+
+            return accounts.ToArray();
         }
 
         public bool VerifyChannel()
@@ -45,7 +65,7 @@ namespace YouTubeSubscriber.Services
             return isYouTubeChannel;
         }
 
-        public void SubscribeToChannel(ref Account[] accounts)
+        public void SubscribeToChannel(Account[] accounts)
         {
             var signInUrl = "https://accounts.google.com/signin/v2/identifier?service=youtube&uilel=3&passive=true&continue=https://www.youtube.com/signin?action_handle_signin=true&app=desktop&hl=en&next=%2F&hl=en&flowName=GlifWebSignIn&flowEntry=ServiceLogin";
 
