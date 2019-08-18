@@ -5,6 +5,7 @@ using Prism.Commands;
 using Prism.Mvvm;
 using YouTubeSubscriber.Data;
 using YouTubeSubscriber.Models;
+using YouTubeSubscriber.Services;
 
 namespace YouTubeSubscriber.ViewModels
 {
@@ -54,14 +55,31 @@ namespace YouTubeSubscriber.ViewModels
                 }
                 else
                 {
-                    _context.Accounts.Add(account);
-                    _context.SaveChanges();
-                    Accounts.Add(account);
-                    StatusText += $"Added account to database \n{account}";
-                    Account.Email = "";
-                    Account.Password = "";
+                    using (var accountService = new GoogleAccountService(account))
+                    {
+                        accountService.OnProcessing += AccountService_OnProcessing;
+
+                        if (accountService.VerifyAccount())
+                        {
+                            account.IsVerified = true;
+
+                            _context.Accounts.Add(account);
+                            _context.SaveChanges();
+                            Accounts.Add(account);
+                            StatusText += $"Added account to database \n{account}";
+                            Account.Email = "";
+                            Account.Password = "";
+                        }
+                    }
+                    
                 }
             });
+        }
+
+        private void AccountService_OnProcessing(object sender, System.EventArgs e)
+        {
+            var message = sender as string;
+            StatusText += message + "\n";
         }
     }
 }

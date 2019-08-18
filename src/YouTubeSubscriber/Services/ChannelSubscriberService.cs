@@ -50,7 +50,7 @@ namespace YouTubeSubscriber.Services
             }
             
             return isYouTubeChannel;
-        }
+        }       
 
         public void SubscribeToChannel(int count)
         {

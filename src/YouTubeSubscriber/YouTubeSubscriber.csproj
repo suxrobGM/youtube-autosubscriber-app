@@ -284,6 +284,7 @@
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Models\ChannelAccount.cs" />
     <Compile Include="Services\ChannelSubscriberService.cs" />
+    <Compile Include="Services\GoogleAccountService.cs" />
     <Compile Include="ViewModels\AccountsViewModel.cs" />
     <Compile Include="ViewModels\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\EditChannelSubscribersViewModel.cs" />

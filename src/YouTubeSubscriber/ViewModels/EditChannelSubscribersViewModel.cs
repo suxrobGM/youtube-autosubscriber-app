@@ -58,7 +58,7 @@ namespace YouTubeSubscriber.ViewModels
                     {
                         if (accountsToProcessCount > InitSubsAccountsCount) // Start subscribing process
                         {
-                            subscriberService.OnProcessing += Automatization_OnProcessing;
+                            subscriberService.OnProcessing += SubscriberService_OnProcessing;
                             subscriberService.SubscribeToChannel(accountsToProcessCount);
                         }
                         else if (accountsToProcessCount < InitSubsAccountsCount) // Start unsubscribing process
@@ -111,7 +111,7 @@ namespace YouTubeSubscriber.ViewModels
             });
         }
 
-        private void Automatization_OnProcessing(object sender, System.EventArgs e)
+        private void SubscriberService_OnProcessing(object sender, System.EventArgs e)
         {
             var message = sender as string;
             StatusText += message + "\n";
